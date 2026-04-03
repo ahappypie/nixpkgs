@@ -92,7 +92,7 @@ runCommand "${wrappedPkgName}-with-extensions-${wrappedPkgVersion}"
         done
 
         makeWrapper "${vscode}/bin/${executableName}" "$out/bin/${executableName}" ${extensionsFlag}
-        makeWrapper "${vscode}/Applications/${longName}.app/Contents/MacOS/Electron" "$out/Applications/${longName}.app/Contents/MacOS/Electron" ${extensionsFlag}
+        makeWrapper "${vscode}/Applications/${longName}.app/Contents/MacOS/${longName}" "$out/Applications/${longName}.app/Contents/MacOS/${longName}" ${extensionsFlag}
       ''
     else
       ''
