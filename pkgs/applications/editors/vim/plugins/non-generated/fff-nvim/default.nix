@@ -11,18 +11,32 @@
   vimUtils,
 }:
 let
-  version = "0.5.1-nightly.538c593-unstable-2026-04-01";
+  version = "0.5.2";
   src = fetchFromGitHub {
     owner = "dmtrKovalenko";
     repo = "fff.nvim";
-    rev = "538c593b7ba173b08beec15e6bce66fccb8f6ab0";
-    hash = "sha256-e+x1ELa2m60j2cQ9g99XSrAMMvmF3WtlMF5HWYrrJps=";
+    tag = "v${version}";
+    hash = "sha256-rv33dRf53m9iJwRl56z9oU0EuY1wUChsZyHOi/3gv4A=";
   };
   fff-nvim-lib = rustPlatform.buildRustPackage {
     pname = "fff-nvim-lib";
     inherit version src;
 
-    cargoHash = "sha256-K6xAzx6YqzrDUalZ1rE4eOBRc1xvXVhac14krskl87M=";
+    cargoHash = "sha256-ylQtZa3ZRs38mhge5tLLCRpnUdHYSjuZOwU+/6TO8Cw=";
+
+    cargoBuildFlags = [
+      "-p"
+      "fff-nvim"
+      "--features"
+      "zlob"
+    ];
+
+    cargoCheckFlags = [
+      "-p"
+      "fff-nvim"
+      "--features"
+      "zlob"
+    ];
 
     nativeBuildInputs = [
       pkg-config
@@ -67,7 +81,6 @@ vimUtils.buildVimPlugin {
 
   passthru = {
     updateScript = nix-update-script {
-      extraArgs = [ "--version=branch" ];
       attrPath = "vimPlugins.fff-nvim.fff-nvim-lib";
     };
 
