@@ -18,14 +18,15 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "symfc";
-  version = "1.6.1";
+  version = "1.7.1";
   pyproject = true;
+  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "symfc";
     repo = "symfc";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-8Szj/s0ZsrpEFJMIo9p/9rDFd5yJiHky58Iab/k3log=";
+    hash = "sha256-bMG22yQszrAAh7qbQjIuaY3KjDXB95Y2OgkwKU+FW0E=";
   };
 
   build-system = [

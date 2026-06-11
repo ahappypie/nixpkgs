@@ -56,24 +56,24 @@
 
 let
   pname = "gitkraken";
-  version = "12.1.0";
+  version = "12.1.2";
 
   throwSystem = throw "Unsupported system: ${stdenv.hostPlatform.system}";
 
   srcs = {
     x86_64-linux = fetchzip {
       url = "https://api.gitkraken.dev/releases/production/linux/x64/${version}/gitkraken-amd64.tar.gz";
-      hash = "sha256-HLo5cNkA59JBZ43Aea5W4vj2X4UDN0NtaB4VEjDQwvM=";
+      hash = "sha256-uYEPOZ1OZwisiitByOWIjymzCayLCdN+cDzW/etktgM=";
     };
 
     x86_64-darwin = fetchzip {
       url = "https://api.gitkraken.dev/releases/production/darwin/x64/${version}/GitKraken-v${version}.zip";
-      hash = "sha256-SzGcT/2X4OXgtUqKCfE9UkKJsBCrKqj++vTdz2Rqfrc=";
+      hash = "sha256-BIeK1ICLmxciNbauWa23IITEUlbum/39e77D4ovNHCc=";
     };
 
     aarch64-darwin = fetchzip {
       url = "https://api.gitkraken.dev/releases/production/darwin/arm64/${version}/GitKraken-v${version}.zip";
-      hash = "sha256-WYhSqRR0bHB1CKGbwSYHWvaCa/GpZCO6X4q6GMLuFpI=";
+      hash = "sha256-1KTdxnpqNYpLKxX5G5QwY6mYP7j9GtDQoTeXwGfhv08=";
     };
   };
 
@@ -88,6 +88,7 @@ let
     maintainers = with lib.maintainers; [
       nicolas-goudry
       Rishik-Y
+      TurnrDev
     ];
     mainProgram = "gitkraken";
   };

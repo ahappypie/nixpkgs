@@ -11,22 +11,21 @@
 
 buildGoModule (finalAttrs: {
   pname = "entire";
-  version = "0.5.6";
+  version = "0.6.3";
 
   src = fetchFromGitHub {
     owner = "entireio";
     repo = "cli";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-bedr0HldXTQJvyXXIsbJb6hMKzqDTz6dv4x0Lwjk13E=";
+    hash = "sha256-yGutKLwdTuGamZMdkqHlhBypZFuY9jM0w/1VW6ACppg=";
   };
 
-  vendorHash = "sha256-iG8Xc6y9gJ1DawTKYSpVlY7H97lZ9OsmvaOX6r0ATXo=";
+  vendorHash = "sha256-pIIrrbp3x15iiY3CuA+wU7315bHUSjvJWBa4Q58OorU=";
 
   subPackages = [ "cmd/entire" ];
 
   ldflags = [
     "-s"
-    "-w"
     "-X=github.com/entireio/cli/cmd/entire/cli/versioninfo.Version=${finalAttrs.version}"
     "-X=github.com/entireio/cli/cmd/entire/cli/versioninfo.Commit=${finalAttrs.src.rev}"
   ];
@@ -55,9 +54,10 @@ buildGoModule (finalAttrs: {
       of how code was written in your repo.
     '';
     homepage = "https://github.com/entireio/cli";
-    changelog = "https://github.com/entireio/cli/blob/${finalAttrs.src.rev}/CHANGELOG.md";
+    changelog = "https://github.com/entireio/cli/blob/${finalAttrs.src.tag}/CHANGELOG.md";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [
+      iamanaws
       sheeeng
       squishykid
     ];
