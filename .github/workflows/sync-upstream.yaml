@@ -22,16 +22,27 @@ jobs:
         run: |
           echo "sync fork nixpkgs-unstable with upstream..."
 
-          RESPONSE=$(gh api --method POST /repos/${{ github.repository }}/merge-upstream \
-            -F branch="nixpkgs-unstable" --silent --output /dev/null -w "%{http_code}" || echo "failed")
+          if API_OUTPUT=$(gh api --method POST /repos/${{ github.repository }}/merge-upstream \
+            -F branch="nixpkgs-unstable" 2>&1); then
 
-          if [ "$RESPONSE" == "200" ] || [ "$RESPONSE" == "204" ]; then
             echo "✅ Successfully synced nixpkgs-unstable with upstream!"
-          elif [ "$RESPONSE" == "409" ]; then
-            echo "⚠️ Conflict detected upstream. Manual intervention required."
-            exit 1
+            echo "📝 GitHub API Response:"
+            echo "$API_OUTPUT"
+
           else
-            echo "ℹ️ Branch already up to date or API completed."
+            if echo "$API_OUTPUT" | grep -q "422"; then
+              echo "ℹ️ Branch is already perfectly up to date with upstream."
+
+            elif echo "$API_OUTPUT" | grep -q "409"; then
+              echo "❌ Conflict detected upstream! Halting workflow to prevent downstream corruption."
+              echo "📝 Error Trace: $API_OUTPUT"
+              exit 1
+
+            else
+              echo "💥 Unexpected API Error encountered!"
+              echo "📝 Error Trace: $API_OUTPUT"
+              exit 1
+            fi
           fi
 
       - name: Check and Propose Merge to Feature Branch
