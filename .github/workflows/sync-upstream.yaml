@@ -22,16 +22,18 @@ jobs:
         run: |
           echo "sync fork nixpkgs-unstable with upstream..."
 
-          if API_OUTPUT=$(gh api --method POST /repos/${{ github.repository }}/merge-upstream \
-            -F branch="nixpkgs-unstable" 2>&1); then
+          API_OUTPUT=$(gh api --method POST -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2026-03-10" /repos/${{ github.repository }}/merge-upstream -f 'branch=nixpkgs-unstable')
 
+          if echo "$API_OUTPUT" | grep -q "200"; then
             echo "✅ Successfully synced nixpkgs-unstable with upstream!"
             echo "📝 GitHub API Response:"
             echo "$API_OUTPUT"
 
           else
             if echo "$API_OUTPUT" | grep -q "422"; then
-              echo "ℹ️ Branch is already perfectly up to date with upstream."
+              echo "ℹ️ Could not be synced for some reason"
+              echo "📝 Error Trace: $API_OUTPUT"
+              exit 1
 
             elif echo "$API_OUTPUT" | grep -q "409"; then
               echo "❌ Conflict detected upstream! Halting workflow to prevent downstream corruption."
@@ -39,8 +41,8 @@ jobs:
               exit 1
 
             else
-              echo "💥 Unexpected API Error encountered!"
-              echo "📝 Error Trace: $API_OUTPUT"
+              echo "💥 Unexpected API Response encountered!"
+              echo "📝 Trace: $API_OUTPUT"
               exit 1
             fi
           fi
