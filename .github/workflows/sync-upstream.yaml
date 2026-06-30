@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      workflows: write
       pull-requests: write
 
     steps:
@@ -46,6 +47,17 @@ jobs:
               exit 1
             fi
           fi
+
+      - name: Disable Newly Introduced Upstream Workflows
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Scanning for any newly added upstream workflows to disable..."
+
+          gh workflow list --all --json path,state | jq -r '.[] | select(.path != ".github/workflows/sync-upstream.yaml" and .state == "active") | .path' | while read -r path; do
+            echo "🔒 Disabling newly discovered workflow: $path"
+            gh workflow disable "$path"
+          done
 
       - name: Check and Propose Merge to Feature Branch
         env:
