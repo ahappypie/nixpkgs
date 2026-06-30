@@ -1,0 +1,83 @@
+name: Sync Upstream Nixpkgs
+
+on:
+  schedule:
+    - cron: '0 9 * * 2' # Runs Tuesday morning UTC
+  workflow_dispatch: # Allows manual execution from the UI/CLI
+  push:
+    branches:
+      - nixpkgs-unstable
+
+jobs:
+  server-side-upstream-sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+      pull-requests: write
+
+    steps:
+#      - name: Sync tracking branch with upstream
+#        env:
+#          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          echo "sync fork nixpkgs-unstable with upstream..."
+#
+#          API_OUTPUT=$(gh api --method POST -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2026-03-10" /repos/${{ github.repository }}/merge-upstream -f 'branch=nixpkgs-unstable')
+#
+#          if echo "$API_OUTPUT" | grep -q "200"; then
+#            echo "✅ Successfully synced nixpkgs-unstable with upstream!"
+#            echo "📝 GitHub API Response:"
+#            echo "$API_OUTPUT"
+#
+#          else
+#            if echo "$API_OUTPUT" | grep -q "422"; then
+#              echo "ℹ️ Could not be synced for some reason"
+#              echo "📝 Error Trace: $API_OUTPUT"
+#              exit 1
+#
+#            elif echo "$API_OUTPUT" | grep -q "409"; then
+#              echo "❌ Conflict detected upstream! Halting workflow to prevent downstream corruption."
+#              echo "📝 Error Trace: $API_OUTPUT"
+#              exit 1
+#
+#            else
+#              echo "💥 Unexpected API Response encountered!"
+#              echo "📝 Trace: $API_OUTPUT"
+#              exit 1
+#            fi
+#          fi
+
+      - name: Disable Newly Introduced Upstream Workflows
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Scanning for any newly added upstream workflows to disable..."
+
+          gh workflow list --all --json path,state | jq -r '.[] | select(.path != ".github/workflows/sync-upstream.yaml" and .state == "active") | .path' | while read -r path; do
+            echo "🔒 Disabling newly discovered workflow: $path"
+            gh workflow disable "$path"
+          done
+
+      - name: Check and Propose Merge to Feature Branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FEATURE_BRANCH: "fix/vscode-with-extensions-macos-path"
+        run: |
+          echo "checking if an active PR already exists from nixpkgs-unstable to $FEATURE_BRANCH..."
+
+          EXISTING_PR=$(gh pr list --repo ${{ github.repository }} \
+            --base "$FEATURE_BRANCH" \
+            --head "nixpkgs-unstable" \
+            --json number --jq '.[0].number')
+
+          if [ -n "$EXISTING_PR" ]; then
+            echo "ℹ️ Pull Request #$EXISTING_PR is already open. GitHub will update it automatically."
+          else
+            echo "🚀 No active PR found. Creating a new PR..."
+            gh pr create --repo ${{ github.repository }} \
+              --base "$FEATURE_BRANCH" \
+              --head "nixpkgs-unstable" \
+              --title "chore(nixpkgs): merge upstream updates into $FEATURE_BRANCH" \
+              --body "Automated PR proposing latest changes from upstream \`nixpkgs-unstable\`."
+          fi

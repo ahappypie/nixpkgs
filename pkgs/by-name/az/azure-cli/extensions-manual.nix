@@ -125,9 +125,9 @@
 
   azure-devops = mkAzExtension rec {
     pname = "azure-devops";
-    version = "1.0.4";
+    version = "1.0.5";
     url = "https://github.com/Azure/azure-cli-extensions/releases/download/azure-devops-${version}/azure_devops-${version}-py2.py3-none-any.whl";
-    hash = "sha256-MYW8CnDfBnBi/dfOgSsI+yT605M8uSxvfjEkEdqYVSo=";
+    hash = "sha256-uzgGU9/EJ7eaQ3HYajEuKRKGcMGW/jQPxGSt/Zgo2rQ=";
     description = "Tools for managing Azure DevOps";
     propagatedBuildInputs = with python3Packages; [ distro ];
     meta.maintainers = with lib.maintainers; [ katexochen ];
@@ -313,9 +313,9 @@
 
   ssh = mkAzExtension rec {
     pname = "ssh";
-    version = "2.0.8";
+    version = "2.0.9";
     url = "https://azcliprod.blob.core.windows.net/cli-extensions/ssh-${version}-py3-none-any.whl";
-    hash = "sha256-eX42Pr1rTPWqUna4nvNMv7sWtIGcXyc/CbmhwRjQxoM=";
+    hash = "sha256-OdE4FZckAeM0eFI5/QPBtLJnCIs7fQF/M47B7ULqxFY=";
     description = "SSH into Azure VMs using RBAC and AAD OpenSSH Certificates";
     propagatedBuildInputs = with python3Packages; [
       oras
