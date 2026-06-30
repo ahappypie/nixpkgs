@@ -17,36 +17,36 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Sync tracking branch with upstream
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "sync fork nixpkgs-unstable with upstream..."
-
-          API_OUTPUT=$(gh api --method POST -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2026-03-10" /repos/${{ github.repository }}/merge-upstream -f 'branch=nixpkgs-unstable')
-
-          if echo "$API_OUTPUT" | grep -q "200"; then
-            echo "✅ Successfully synced nixpkgs-unstable with upstream!"
-            echo "📝 GitHub API Response:"
-            echo "$API_OUTPUT"
-
-          else
-            if echo "$API_OUTPUT" | grep -q "422"; then
-              echo "ℹ️ Could not be synced for some reason"
-              echo "📝 Error Trace: $API_OUTPUT"
-              exit 1
-
-            elif echo "$API_OUTPUT" | grep -q "409"; then
-              echo "❌ Conflict detected upstream! Halting workflow to prevent downstream corruption."
-              echo "📝 Error Trace: $API_OUTPUT"
-              exit 1
-
-            else
-              echo "💥 Unexpected API Response encountered!"
-              echo "📝 Trace: $API_OUTPUT"
-              exit 1
-            fi
-          fi
+#      - name: Sync tracking branch with upstream
+#        env:
+#          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          echo "sync fork nixpkgs-unstable with upstream..."
+#
+#          API_OUTPUT=$(gh api --method POST -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2026-03-10" /repos/${{ github.repository }}/merge-upstream -f 'branch=nixpkgs-unstable')
+#
+#          if echo "$API_OUTPUT" | grep -q "200"; then
+#            echo "✅ Successfully synced nixpkgs-unstable with upstream!"
+#            echo "📝 GitHub API Response:"
+#            echo "$API_OUTPUT"
+#
+#          else
+#            if echo "$API_OUTPUT" | grep -q "422"; then
+#              echo "ℹ️ Could not be synced for some reason"
+#              echo "📝 Error Trace: $API_OUTPUT"
+#              exit 1
+#
+#            elif echo "$API_OUTPUT" | grep -q "409"; then
+#              echo "❌ Conflict detected upstream! Halting workflow to prevent downstream corruption."
+#              echo "📝 Error Trace: $API_OUTPUT"
+#              exit 1
+#
+#            else
+#              echo "💥 Unexpected API Response encountered!"
+#              echo "📝 Trace: $API_OUTPUT"
+#              exit 1
+#            fi
+#          fi
 
       - name: Disable Newly Introduced Upstream Workflows
         env:
